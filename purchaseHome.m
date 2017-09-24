@@ -1,5 +1,5 @@
 %Simulate the purchase of a home, return a vector of interest and principal payments made monthly given the input parameters
-function [interestPaid,principalPaid,taxDollarsSaved] = purchaseHome(homeValue,downPayment,yearsLoan,PrincipalMultiplier,interestRate,monthlyIncome,incomeTaxes)
+function [interestPaid,principalPaid,taxDollarsSaved] = purchaseHome(homeValue,downPayment,yearsLoan,PrincipalMultiplier,interestRate,monthlyIncome,incomeTaxes,maxPayments,otherExpenses)
 %Home purchase scenario: 
 
 %Calculate base parameters
@@ -25,6 +25,9 @@ while remainderLoan_real>0
   interestPayment_real = (remainderLoan - hypPaid_real)*(interestRate/(12*100));
   hypPaid_real = monthlyPayments-interestPayment_real;
   actualPaid = hypPaid_real*PrincipalMultiplier;
+  if maxPayments == 1
+    actualPaid = (monthlyIncome*(1-incomeTaxes)) - (interestPayment_real + otherExpenses); 
+  endif
   remainderLoan_real = remainderLoan_real - actualPaid ; remainderLoan = remainderLoan - hypPaid_real; 
   interestVect_real = horzcat(interestVect_real,interestPayment_real); LoanVect_real = horzcat(LoanVect_real,remainderLoan_real); PayVect = horzcat(PayVect,actualPaid); 
   %Accounting for money saved due to tax deductions on interest payments

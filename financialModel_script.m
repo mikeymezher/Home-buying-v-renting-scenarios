@@ -10,7 +10,7 @@ jointAnnualIncome = 155000;
 initialSavings = 50000; 
 jointMonthlyIncome = jointAnnualIncome/12; 
 additionalLivingCosts = 500; %Food, entertainment, gas, etc
-incomeTaxes = .2; %Tax (will be used as a flat deduction from income)
+incomeTaxes = .3; %Tax (will be used as a flat deduction from income)
 
 %Home purchase parameters 
 homeValue = 350000; %USD
@@ -18,13 +18,14 @@ interestRate = 3.5; %Percent annually
 yearsLoan = 15; %15 or 30 year loan
 downPayment = initialSavings; %Assuming entire savings is used for a down payment
 PrincipalMultiplier = 1; %Ratio of actual principal payment to required principal payment (must be a value greater than 1) 
+maxPayments = 1; #If 1 (true) the maximum amount of money (given monthly income) will be used to make principal payments. Otherwise, the principal multiplier value will be used. 
 
 %Renting parameters
 monthlyRent = 1700; %Including utilities 
-downPaymentPercent = 100; %Percent of downpayment to save prior to purchasing house 
+downPaymentPercent = 80; %Percent of downpayment to save prior to purchasing house 
 
 %Home purchase scenario:
-[interestVect,principalVect,savingsVect] = purchaseHome(homeValue,downPayment,yearsLoan,PrincipalMultiplier,interestRate,jointMonthlyIncome,incomeTaxes);
+[interestVect,principalVect,savingsVect] = purchaseHome(homeValue,downPayment,yearsLoan,PrincipalMultiplier,interestRate,jointMonthlyIncome,incomeTaxes,maxPayments,additionalLivingCosts);
 cumulativeInterest = cumsum(interestVect);
 cumulativeSaved = cumsum(savingsVect); 
 totalSaved = max(cumulativeSaved)
@@ -34,5 +35,5 @@ totalPaid_Interest_taxAdjusted = totalPaid_Interest - totalSaved
 %Rent then purchase scenario:
 [rentPaid,monthsToSave] = rentHome(monthlyRent,additionalLivingCosts,downPaymentPercent,jointMonthlyIncome,homeValue,initialSavings,incomeTaxes);
 downPayment_R = homeValue * downPaymentPercent;
-[interestVect2,principalVect2] = purchaseHome(homeValue,downPayment_R,yearsLoan,PrincipalMultiplier,interestRate);
+[interestVect2,principalVect2] = purchaseHome(homeValue,downPayment_R,yearsLoan,PrincipalMultiplier,interestRate,jointMonthlyIncome,incomeTaxes,maxPayments,additionalLivingCosts);
 totalPaid_RentandInterest = rentPaid + max(cumsum(interestVect2)) %Total interest and rent paid (non equity accumulating value) prior to completely owning the house
